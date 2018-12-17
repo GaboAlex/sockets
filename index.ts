@@ -17,4 +17,4 @@ server.app.use('/',router);
 //iniciando el servidor
 server.start(()=>{
     console.log(`Servidor corriendo en el puerto ${server.port}`);
-})
+});
