@@ -9,7 +9,12 @@ export class UsuariosLista{
         console.log("[UsuarioLista|agregar] Nueva Lista de Usuarios => ",this.lista);
     }
     public getLista(){
-        return this.lista
+        let listaTemportal = this.lista.filter((usuario)=>{
+            if(usuario.nombre !== 'sin-nombre'){
+                return usuario;
+            }
+        });
+        return listaTemportal;
     }
     public actualizarNombre(id:string, nombre:string){
         for(let usuario of this.lista){

@@ -42,10 +42,12 @@ export default class Server{
             console.log("Nuevo Cliente conectado", cliente.id);
             const usuario = new Usuario(cliente.id)
             this.usuariosConectados.agregar(usuario);
+            
             //el cliente que se ha conectado previamente, escucha su desconexion
             cliente.on('disconnect',()=>{
                 console.log("Cliente desconectado");
                 this.usuariosConectados.borrarUsuario(cliente.id);
+                this.io.emit('usuarios-activos',this.usuariosConectados.getLista());
             });
             //el cliente que se ha conectado previamente, escucha un evento de nombre:'mensaje'
             cliente.on('mensaje', (contenido) =>{
@@ -53,11 +55,15 @@ export default class Server{
                 this.io.emit('mensaje-nuevo',contenido);
             });
             cliente.on('configurar-usuario',(payload:any,callback:Function)=>{
-                this.usuariosConectados.actualizarNombre(cliente.id,payload.nombre)
+                this.usuariosConectados.actualizarNombre(cliente.id,payload.nombre);
+                this.io.emit('usuarios-activos',this.usuariosConectados.getLista());
                 callback({
                     ok:true,
                     mensaje:`Usuario ${payload.nombre} configurado`
                 });
+            });
+            cliente.on('obtener-usuarios', () =>{
+                this.io.in(cliente.id).emit('usuarios-activos',this.usuariosConectados.getLista());
             });
         });
     }
